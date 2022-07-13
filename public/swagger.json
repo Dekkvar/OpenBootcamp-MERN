@@ -1,0 +1,76 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"BasicResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"description": "Basic JSON response for Controllers"
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "openbootcamp-mern",
+		"version": "1.0.0",
+		"description": "Ejercicios curso de MERN de Open Bootcamp",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {
+			"name": "Aitor Couñago Figueroa"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/api/hello": {
+			"get": {
+				"operationId": "GetMessage",
+				"responses": {
+					"200": {
+						"description": "Promise of BasicResponse",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasicResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint to retreive a Message \"Hello {name}\" in JSON",
+				"tags": [
+					"HelloController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Name of user to be greeted",
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

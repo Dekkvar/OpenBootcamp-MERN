@@ -12,7 +12,7 @@ export class HelloController implements IHelloController {
    * @returns Promise of BasicResponse
    */
   @Get('/')
-  public async getMessage (@Query()name?: string | undefined): Promise<BasicResponse> {
+  public async getMessage (@Query()name?: string): Promise<BasicResponse> {
     LogSuccess('[/api/hello] Get Request')
 
     return {
