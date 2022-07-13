@@ -5,6 +5,8 @@ Ejercicios de la certificación MERN de Open Bootcamp.
 #### Dependencias globales:
 1. **Express**: Web framework para Nodejs.
 2. **Dotenv**: Es un módulo que no depende de otros para funcionar y que carga variables de entorno para el proyecto.
+3. **Cors**: Limita los recursos que pueden ser requeridos en nuestro servicio por parte de otros dominios externos.
+4. **Helmet**: Ayuda de seguridad para aplicaciones de Express.
 
 #### Dependencias de desarrollo:
 1. **Nodemon**: Script simple de monitorización para usar durante el desarrollo de aplicaciones Nodejs.
