@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
-import { HelloController } from '@/controller/HelloController'
-import { LogInfo } from '@/utils/logger'
+import { HelloController } from '../controller/HelloController'
+import { LogInfo } from '../utils/logger'
 
 // Router from express
 const helloRouter = express.Router()

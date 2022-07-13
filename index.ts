@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
-import server from '@/server'
-import { LogSuccess, LogError } from '@/utils/logger'
+import server from './src/server'
+import { LogSuccess, LogError } from './src/utils/logger'
 
 // Configuration .env file
 dotenv.config()
@@ -13,6 +13,6 @@ server.listen(port, () => {
 })
 
 // Control SERVER ERROR
-server.on('error', (error) => {
+server.on('error', (error: any) => {
   LogError(`[SERVER ERROR]: ${error}`)
 })
