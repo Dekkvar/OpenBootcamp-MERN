@@ -6,6 +6,22 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"GoodbyeResponse": {
+				"properties": {
+					"date": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"date",
+					"message"
+				],
+				"type": "object",
+				"description": "Goodbye JSON response for Controllers"
+			},
 			"BasicResponse": {
 				"properties": {
 					"message": {
@@ -34,6 +50,39 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/goodbye": {
+			"get": {
+				"operationId": "GetMessage",
+				"responses": {
+					"200": {
+						"description": "Promise of GoodbyeResponse",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GoodbyeResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint to retreive a Message \"Goodbye {name}\" in JSON",
+				"tags": [
+					"GoodbyeController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Name of user to say goodbye",
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/hello": {
 			"get": {
 				"operationId": "GetMessage",
