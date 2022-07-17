@@ -7,3 +7,14 @@ export interface IHelloController {
 export interface IGoodbyeController {
   getMessage(name?:string): Promise<GoodbyeResponse>
 }
+
+export interface IUserController {
+  // Read all users from database || get User By ID
+  getUsers(id?: string): Promise<any>
+  // Delete User by ID
+  deleteUser(id?: string): Promise<any>
+  // Create new User
+  createUser(user: any): Promise<any>
+  // Update User
+  updateUser(id: string, user: any): Promise<any>
+}
