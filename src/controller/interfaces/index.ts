@@ -18,3 +18,8 @@ export interface IUserController {
   // Update User
   updateUser(id: string, user: any): Promise<any>
 }
+
+export interface IKataController {
+  // Read all katas from database || get Katas by parameter
+  getKatas(level?: number): Promise<any>
+}

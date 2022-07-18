@@ -21,6 +21,8 @@ usersRouter.route('/')
     // Send to the client the response
     return res.send(response)
   })
+
+  // DELETE:
   .delete(async (req: Request, res: Response) => {
     // Obtain a Query Param
     const id: any = req?.query?.id
@@ -32,7 +34,8 @@ usersRouter.route('/')
     // Send to the client the response
     return res.send(response)
   })
-  // POST
+
+  // POST:
   .post(async (req: Request, res: Response) => {
     // Obtain a Query Param
     const name: any = req?.query?.name
@@ -52,7 +55,8 @@ usersRouter.route('/')
     // Send to the client the response
     return res.send(response)
   })
-  // PUT
+
+  // PUT:
   .put(async (req: Request, res: Response) => {
     // Obtain a Query Param
     const id: any = req?.query?.id
