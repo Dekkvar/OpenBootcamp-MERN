@@ -1,8 +1,15 @@
 // ORM es el encargado de gestionar la base de datos
 
 import { userEntity } from '../entities/User.entity'
-
 import { LogError } from '../../utils/logger'
+import { IUser } from '../interfaces/IUser.interface'
+import { IAuth } from '../interfaces/IAuth.interface'
+
+// BCRYPT for passwords
+import bcrypt from 'bcrypt'
+
+// JWT
+import jwt from 'jsonwebtoken'
 
 // CRUD
 
@@ -68,5 +75,53 @@ export const updateUserById = async (id: string, user: any): Promise<any | undef
   }
 }
 
-// TODO:
-// - Get User By Email
+// - Register User
+export const registerUser = async (user: IUser): Promise<any | undefined> => {
+  try {
+    const userModel = userEntity()
+
+    // Create a new User
+    return await userModel.create(user)
+  } catch (error) {
+    LogError(`[ORM ERROR]: Registering User: ${error}`)
+  }
+}
+
+// - Login User
+export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
+  try {
+    const userModel = userEntity()
+
+    userModel.findOne({ email: auth.email }, (err: any, user: IUser) => {
+      if (err) {
+        // TODO return error --> error while seraching (500)
+      }
+
+      if (!user) {
+        // TODO return error --> error user not found (400)
+      }
+
+      // Use BCRYPT to Compare Password
+      const validPassword = bcrypt.compareSync(auth.password, user.password)
+
+      if (!validPassword) {
+        // TODO return error --> Not authorised (401)
+      }
+
+      // Create JWT
+      // TODO: Secret must be in .env
+      const token = jwt.sign({email: user.email}, 'SECRET', {
+        expiresIn: '2h'
+      })
+
+      return token
+    })
+  } catch (error) {
+    LogError(`[ORM ERROR]: Getting User by ID: ${error}`)
+  }
+}
+
+// - Logout User
+export const logoutUser = async (): Promise<any | undefined> => {
+  // TODO Not implemented
+}

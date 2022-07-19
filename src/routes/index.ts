@@ -9,6 +9,7 @@ import goodbyeRouter from './GoodbyeRouter'
 import { LogInfo } from '../utils/logger'
 import usersRouter from './UserRouter'
 import katasRouter from './KataRouter'
+import authRouter from './AuthRouter'
 
 // Server instance
 const server = express()
@@ -25,9 +26,11 @@ rootRouter.get('/', (req: Request, res: Response) => {
 // Redirections to Routers & Controllers
 server.use('/', rootRouter) // http://localhost:8000/api/
 server.use('/hello', helloRouter) // http://localhost:8000/api/hello --> HelloRouter
-server.use('/hello', goodbyeRouter) // http://localhost:8000/api/goodbye --> GoodbyeRouter
+server.use('/goodbye', goodbyeRouter) // http://localhost:8000/api/goodbye --> GoodbyeRouter
 // Add more routes to the app
 server.use('/users', usersRouter) // http://localhost:8000/api/users --> UserRouter
 server.use('/katas', katasRouter) // http://localhost:8000/api/katas --> KataRouter
+// Auth routes
+server.use('/auth', authRouter) // http://localhost:8000/api/auth --> AuthRouter
 
 export default server

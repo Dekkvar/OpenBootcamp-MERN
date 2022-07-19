@@ -18,8 +18,8 @@ const server = express()
 
 // Swagger Config and route
 server.use(
-  '/docs', 
-  swaggerUi.serve, 
+  '/docs',
+  swaggerUi.serve,
   swaggerUi.setup(undefined, {
     swaggerOptions: {
       url: '/swagger.json',

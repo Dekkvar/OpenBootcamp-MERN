@@ -19,7 +19,7 @@ usersRouter.route('/')
     // Obtain Response
     const response: any = await controller.getUsers(id)
     // Send to the client the response
-    return res.send(response)
+    return res.status(200).send(response)
   })
 
   // DELETE:
@@ -32,7 +32,7 @@ usersRouter.route('/')
     // Obtain Response
     const response: any = await controller.deleteUser(id)
     // Send to the client the response
-    return res.send(response)
+    return res.status(200).send(response)
   })
 
   // POST:
@@ -41,6 +41,7 @@ usersRouter.route('/')
     const name: any = req?.query?.name
     const email: any = req?.query?.email
     const age: any = req?.query?.age
+
     // Controller Instance to execute method
     const controller: UserController = new UserController()
 
@@ -53,7 +54,7 @@ usersRouter.route('/')
     // Obtain Response
     const response: any = await controller.createUser(user)
     // Send to the client the response
-    return res.send(response)
+    return res.status(201).send(response)
   })
 
   // PUT:
@@ -72,12 +73,20 @@ usersRouter.route('/')
     }
     // Controller Instance to execute method
     const controller: UserController = new UserController()
-
     // Obtain Response
     const response: any = await controller.updateUser(id, user)
     // Send to the client the response
-    return res.send(response)
+    return res.status(200).send(response)
   })
 
 // Export Users Router
 export default usersRouter
+
+/**
+ *
+ * Get Documents => 200 OK
+ * Creation Documents => 201 OK
+ * Deletion of Documents => 200 (Entity) / 204 (No Return)
+ * Update of Documents => 200 (Entity) / 204 (No Return)
+ *
+ */
