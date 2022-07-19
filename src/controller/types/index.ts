@@ -13,14 +13,6 @@ export type GoodbyeResponse = {
   date: string
 }
 
- /**
-  * Kata JSON response for Controllers
-  */
-//  export type KataResponse = {
-//   message: string,
-//   date: string
-// }
-
 /**
  * Error JSON response for Controllers
  */

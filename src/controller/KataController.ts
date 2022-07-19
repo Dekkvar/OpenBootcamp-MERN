@@ -35,6 +35,9 @@ export class KataController implements IKataController {
     return response
   }
 
+  /**
+   * Endpoint to update the Katas in the Collection "Katas" of DB
+   */
   @Put('/')
   public async updateKata (@Query()id: string, update: any): Promise<any> {
     let response: any = ''

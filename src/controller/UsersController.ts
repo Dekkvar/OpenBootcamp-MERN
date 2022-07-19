@@ -57,9 +57,9 @@ export class UserController implements IUserController {
   }
 
   /**
-   * Endpoint to delete a User in the Collection "Users" of DB
-   * @param {string} id Id of user to delete (optional)
-   * @returns Message information if deletion was correct
+   * Endpoint to create a User in the Collection "Users" of DB
+   * @param {string} user User to create
+   * @returns Message information if creation was correct
    */
   @Post('/')
   public async createUser (user: any): Promise<any> {
@@ -75,6 +75,11 @@ export class UserController implements IUserController {
     return response
   }
 
+  /**
+   * Endpoint to update a User in the Collection "Users" of DB
+   * @param {string} id User to update
+   * @returns Message information if update was correct
+   */
   @Put('/')
   public async updateUser (@Query()id: string, user: any): Promise<any> {
     let response: any = ''
