@@ -2,13 +2,16 @@ import express, { Request, Response } from 'express'
 import { KataController } from '../controller/KataController'
 import { LogInfo } from '../utils/logger'
 
+// JWT verifier MiddleWare
+import { verifyToken } from '../middlewares/verifyToken.middleware'
+
 // Router from express
 const katasRouter = express.Router()
 
 // http://localhost:8000/api/katas
 katasRouter.route('/')
   // GET:
-  .get(async (req: Request, res: Response) => {
+  .get(verifyToken, async (req: Request, res: Response) => {
     // Obtain a Query Param
     const level: any = req?.query?.level
     const last: any = req?.query?.last
@@ -23,7 +26,7 @@ katasRouter.route('/')
   })
 
   // PUT:
-  .put(async (req: Request, res: Response) => {
+  .put(verifyToken, async (req: Request, res: Response) => {
     // Obtain Query Params
     const id: any = req?.query?.id
     const name: any = req?.query?.name
