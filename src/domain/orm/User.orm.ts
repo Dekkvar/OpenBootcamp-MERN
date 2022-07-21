@@ -4,6 +4,7 @@ import { userEntity } from '../entities/User.entity'
 import { LogError } from '../../utils/logger'
 import { IUser } from '../interfaces/IUser.interface'
 import { IAuth } from '../interfaces/IAuth.interface'
+import { UserResponse } from '../types/UsersResponse.types'
 
 // Environment variables
 import dotenv from 'dotenv'
@@ -25,12 +26,28 @@ const secret = process.env.SECRETKEY || 'MYSECRETKEY'
 /**
  * Method to obtain all Users from Collection "Users" in Mongo Server
  */
-export const getAllUsers = async (): Promise<any[] | undefined> => {
+export const getAllUsers = async (page: number, limit: number): Promise<any[] | undefined> => {
   try {
     const userModel = userEntity()
 
-    // Search all users
-    return await userModel.find({ isDelete: false })
+    let response: any = {}
+
+    // Search all users (using pagination)
+    await userModel.find({ isDeleted: false })
+      .select('name email age')
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec().then((users: IUser[]) => {
+        response.users = users
+      })
+
+    // Count total documents in collection "Users"
+    await userModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit)
+      response.currentPage = page
+    })
+
+    return response
   } catch (error) {
     LogError(`[ORM ERROR]: Getting All Users: ${error}`)
   }
@@ -42,7 +59,7 @@ export const getUserByID = async (id: string): Promise<any | undefined> => {
     const userModel = userEntity()
 
     // Search User by ID
-    return await userModel.findById({ _id: id })
+    return await userModel.findById({ _id: id }).select('name email age')
   } catch (error) {
     LogError(`[ORM ERROR]: Getting User by ID: ${error}`)
   }
@@ -101,8 +118,8 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
   try {
     const userModel = userEntity()
 
-    let userFound: IUser | undefined = undefined
-    let token = undefined
+    let userFound: IUser | undefined
+    let token
 
     // Check if user exists by Unique Email
     await userModel.findOne({ email: auth.email }).then((user: IUser) => {
@@ -113,7 +130,7 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
     })
 
     // Check if Password is Valid (Compare with bcrypt)
-    let validPassword = bcrypt.compareSync(auth.password, userFound!.password)
+    const validPassword = bcrypt.compareSync(auth.password, userFound!.password)
 
     if (!validPassword) {
       console.error('[ERROR Authentication in ORM]: Password Not Valid')

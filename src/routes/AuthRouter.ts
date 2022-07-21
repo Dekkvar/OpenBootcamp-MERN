@@ -94,5 +94,4 @@ authRouter.route('/me')
     }
   })
 
-
-  export default authRouter
+export default authRouter
