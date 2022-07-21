@@ -4,6 +4,11 @@ import express, { Request, Response } from 'express'
 import { UserController } from '../controller/UsersController'
 import { LogInfo } from '../utils/logger'
 
+// Body Parser to read BODY from requests
+import bodyParser from 'body-parser'
+
+const jsonParser = bodyParser.json()
+
 // Router from express
 const usersRouter = express.Router()
 
@@ -33,28 +38,6 @@ usersRouter.route('/')
     const response: any = await controller.deleteUser(id)
     // Send to the client the response
     return res.status(200).send(response)
-  })
-
-  // POST:
-  .post(async (req: Request, res: Response) => {
-    // Obtain a Query Param
-    const name: any = req?.query?.name
-    const email: any = req?.query?.email
-    const age: any = req?.query?.age
-
-    // Controller Instance to execute method
-    const controller: UserController = new UserController()
-
-    const user = {
-      name: name || 'default',
-      email: email || 'default email',
-      age: age || 18
-    }
-
-    // Obtain Response
-    const response: any = await controller.createUser(user)
-    // Send to the client the response
-    return res.status(201).send(response)
   })
 
   // PUT:

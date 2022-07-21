@@ -3,9 +3,10 @@ import { IAuthController } from './interfaces'
 import { LogSuccess, LogWarning } from '../utils/logger'
 import { IUser } from '../domain/interfaces/IUser.interface'
 import { IAuth } from '../domain/interfaces/IAuth.interface'
+import { AuthResponse, ErrorResponse } from './types'
 
 // ORM - Auth Collection
-import { registerUser, loginUser, logoutUser } from '../domain/orm/User.orm'
+import { registerUser, loginUser, logoutUser, getUserByID } from '../domain/orm/User.orm'
 
 @Route('/api/auth')
 @Tags('AuthController')
@@ -16,7 +17,7 @@ export class AuthController implements IAuthController {
 
     if (user) {
       await registerUser(user).then((r) => {
-        LogSuccess(`[/api/auth/register] Create User: ${user}`)
+        LogSuccess(`[/api/auth/register] Create User: ${user.email}`)
         response = {
           message: `User creates successfully: ${user.name}`
         }
@@ -24,7 +25,7 @@ export class AuthController implements IAuthController {
     } else {
       LogWarning('[/api/auth/register] Register needs User Entity')
       response = {
-        message: 'Please, provide a User to create one'
+        message: 'User not Registered: Please, provide a User to create one'
       }
     }
     return response
@@ -32,21 +33,41 @@ export class AuthController implements IAuthController {
 
   @Post('/login')
   public async loginUser (auth: IAuth): Promise<any> {
-    let response: any = ''
+    let response: AuthResponse | ErrorResponse | undefined
 
     if (auth) {
-      await loginUser(auth).then((r) => {
-        LogSuccess(`[/api/auth/login] Logged In User: ${auth.email}`)
-        response = {
-          message: `User Logged In successfully: ${auth.email}`,
-          token: r.token // JWT generated for logged in user
-        }
-      })
+      let data = await loginUser(auth)
+      response = {
+        token: data.token,
+        message: `Welcome, ${data.user.name}`
+      }
     } else {
       LogWarning('[/api/auth/login] Login needs Auth Entity (email && password)')
       response = {
+        error: '[AUTH ERROR]: Email & Password are needed',
         message: 'Please, provide a email && password to login'
       }
+    }
+
+    return response
+  }
+
+  /**
+   * Endpoint to retreive the User in the Collection 'Users' of DB
+   * Middleware: Validate JWT
+   * In headers you must add the x-access-token with a valid JWT
+   * @param id Id of user to retreive
+   * @returns user found by Id
+   */
+  @Get('/me')
+  public async userData (@Query()id: string): Promise<any> {
+    let response: any = ''
+
+    if (id) {
+      LogSuccess(`[/api/auth/me] Get User Data By ID: ${id}`)
+      response = await getUserByID(id)
+      // Remove the password
+      response.password = ''
     }
 
     return response
