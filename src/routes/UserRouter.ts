@@ -4,6 +4,9 @@ import express, { Request, Response } from 'express'
 import { UserController } from '../controller/UsersController'
 import { LogInfo } from '../utils/logger'
 
+// JWT verifier MiddleWare
+import { verifyToken } from '../middlewares/verifyToken.middleware'
+
 // Body Parser to read BODY from requests
 import bodyParser from 'body-parser'
 
@@ -15,7 +18,7 @@ const usersRouter = express.Router()
 // http://localhost:8000/api/users
 usersRouter.route('/')
   // GET:
-  .get(async (req: Request, res: Response) => {
+  .get(verifyToken, async (req: Request, res: Response) => {
     // Obtain a Query Param
     const id: any = req?.query?.id
     LogInfo(`Query Param: ${id}`)
@@ -28,7 +31,7 @@ usersRouter.route('/')
   })
 
   // DELETE:
-  .delete(async (req: Request, res: Response) => {
+  .delete(verifyToken, async (req: Request, res: Response) => {
     // Obtain a Query Param
     const id: any = req?.query?.id
     LogInfo(`Query Param: ${id}`)
@@ -41,7 +44,7 @@ usersRouter.route('/')
   })
 
   // PUT:
-  .put(async (req: Request, res: Response) => {
+  .put(verifyToken, async (req: Request, res: Response) => {
     // Obtain a Query Param
     const id: any = req?.query?.id
     const name: any = req?.query?.name
