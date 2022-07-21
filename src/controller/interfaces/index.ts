@@ -20,7 +20,7 @@ export interface IUserController {
 
 export interface IKataController {
   // Read all katas from database || get Katas by parameter
-  getKatas(level?: number, last?: string, rated?: string, chance?: string): Promise<any>
+  getKatas(page: number, limit: number, level?: number, last?: string, rated?: string, chance?: string): Promise<any>
   // Update Kata
   updateKata(id: string, update: any): Promise<any>
 }

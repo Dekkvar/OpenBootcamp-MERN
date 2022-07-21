@@ -1,17 +1,29 @@
 /* eslint-disable no-trailing-spaces */
 import { LogError } from '../../utils/logger'
 import { kataEntity } from '../entities/Kata.entity'
+import { IKata } from '../interfaces/IKata.interface'
 
 // CRUD
 
 /**
  * Method to obtain all katas from Collection "katas" in MongoDB server
  */
-export const getAllKatas = async (): Promise<any | undefined> => {
+export const getAllKatas = async (page: number, limit: number): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
     
-    return await kataModel.find()
+    let response: any = {}
+
+    await kataModel.find().limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
+      response.katas = katas
+    })
+
+    await kataModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit)
+      response.currentPage = page
+    })
+
+    return response
   } catch (error) {
     LogError(`[ORM ERROR]: Getting All Katas: ${error}`)
   }
@@ -20,11 +32,22 @@ export const getAllKatas = async (): Promise<any | undefined> => {
 /**
  * Method to obtain the Katas by difficulty level from Collection "katas" in Mongo Server
  */
-export const getKataByDifficulty = async (level: number): Promise<any | undefined> => {
+export const getKataByDifficulty = async (page: number, limit: number, level: number): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 
-    return await kataModel.find({ level })
+    let response: any = {}
+
+    await kataModel.find({ level }).limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
+      response.katas = katas
+    })
+
+    await kataModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit)
+      response.currentPage = page
+    })
+
+    return response
   } catch (error) {
     LogError(`[ORM ERROR]: Getting Katas by difficulty level: ${error}`)
   }
@@ -48,12 +71,23 @@ export const getLast5Katas = async (last: string): Promise<any | undefined> => {
 /**
  * Method to obtain all Katas from better to worst rated
  */
-export const getAllKatasByRate = async (rated: string): Promise<any | undefined> => {
+export const getAllKatasByRate = async (page: number, limit: number, rated: string): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 
     if (rated === 'true') {
-      return await kataModel.find().sort({ valoration: -1 })
+      let response: any = {}
+
+      await kataModel.find().sort({ valoration: -1 }).limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
+        response.katas = katas
+      })
+
+      await kataModel.countDocuments().then((total: number) => {
+        response.totalPages = Math.ceil(total / limit)
+        response.currentPage = page
+      })
+
+      return response
     }
   } catch (error) {
     LogError(`[ORM ERROR]: Getting All Katas By Rating: ${error}`)
@@ -63,12 +97,23 @@ export const getAllKatasByRate = async (rated: string): Promise<any | undefined>
 /**
  * Method to obtain all Katas by number of chances
  */
-export const getAllKatasByChance = async (chance: string): Promise<any | undefined> => {
+export const getAllKatasByChance = async (page: number, limit: number, chance: string): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 
     if (chance === 'true') {
-      return await kataModel.find().sort({ chance: -1 })
+      let response: any = {}
+
+      await kataModel.find().sort({ chance: -1 }).limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
+        response.katas = katas
+      })
+
+      await kataModel.countDocuments().then((total: number) => {
+        response.totalPages = Math.ceil(total / limit)
+        response.currentPage = page
+      })
+
+      return response
     }
   } catch (error) {
     LogError(`[ORM ERROR]: Getting All Katas By Chance: ${error}`)

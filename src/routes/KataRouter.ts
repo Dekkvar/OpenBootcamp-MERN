@@ -17,10 +17,15 @@ katasRouter.route('/')
     const last: any = req?.query?.last
     const rated: any = req?.query?.rated
     const chance: any = req?.query?.chance
+
+    // Pagination
+    const page: any = req?.query?.page || 1
+    const limit: any = req?.query?.limit || 10
+
     // Controller Instance to execute method
     const controller: KataController = new KataController()
     // Obtain Response
-    const response: any = await controller.getKatas(level, last, rated, chance)
+    const response: any = await controller.getKatas(page, limit, level, last, rated, chance)
     // Send to the client the response
     return res.send(response)
   })
