@@ -50,6 +50,37 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/auth/me": {
+			"get": {
+				"operationId": "UserData",
+				"responses": {
+					"200": {
+						"description": "user found by Id",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Endpoint to retreive the User in the Collection 'Users' of DB\r\nMiddleware: Validate JWT\r\nIn headers you must add the x-access-token with a valid JWT",
+				"tags": [
+					"AuthController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Id of user to retreive",
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/goodbye": {
 			"get": {
 				"operationId": "GetMessage",
@@ -116,6 +147,37 @@
 				]
 			}
 		},
+		"/api/katas": {
+			"delete": {
+				"operationId": "DeleteKataById",
+				"responses": {
+					"200": {
+						"description": "Message information if deletion was correct",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Endpoint to delete a Kata in the Collection \"Katas\" of DB",
+				"tags": [
+					"KataController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Id of kata to delete (optional)",
+						"in": "query",
+						"name": "id",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/users": {
 			"get": {
 				"operationId": "GetUsers",
@@ -136,6 +198,24 @@
 				"security": [],
 				"parameters": [
 					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
 						"description": "Id of user to retreive (optional)",
 						"in": "query",
 						"name": "id",
@@ -148,6 +228,37 @@
 			},
 			"delete": {
 				"operationId": "DeleteUser",
+				"responses": {
+					"200": {
+						"description": "Message information if deletion was correct",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Endpoint to delete a User in the Collection \"Users\" of DB",
+				"tags": [
+					"UserController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Id of user to delete (optional)",
+						"in": "query",
+						"name": "id",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/users/katas": {
+			"get": {
+				"operationId": "GetKatas",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -165,8 +276,26 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
 						"name": "id",
-						"required": false,
+						"required": true,
 						"schema": {
 							"type": "string"
 						}

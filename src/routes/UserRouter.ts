@@ -70,6 +70,23 @@ usersRouter.route('/')
     return res.status(200).send(response)
   })
 
+// http://localhost:8000/api/users/katas
+usersRouter.route('/katas')
+  .get(verifyToken, async (req: Request, res: Response) => {
+    // Obtain a Query Param
+    const id: any = req?.query?.id
+
+    // Pagination
+    const page: any = req?.query?.page || 1
+    const limit: any = req?.query?.limit || 10
+    // Controller Instance to execute method
+    const controller: UserController = new UserController()
+    // Obtain Response
+    const response: any = await controller.getKatas(page, limit, id)
+    // Send to the client the response
+    return res.status(200).send(response)
+  })
+
 // Export Users Router
 export default usersRouter
 

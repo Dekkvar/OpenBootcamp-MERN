@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-trailing-spaces */
 import { LogError } from '../../utils/logger'
 import { kataEntity } from '../entities/Kata.entity'
@@ -8,13 +9,13 @@ import { IKata } from '../interfaces/IKata.interface'
 /**
  * Method to obtain all katas from Collection "katas" in MongoDB server
  */
-export const getAllKatas = async (page: number, limit: number): Promise<any | undefined> => {
+export const getAllKatas = async (page: number, limit: number): Promise<any[] | undefined> => {
   try {
     const kataModel = kataEntity()
     
     let response: any = {}
 
-    await kataModel.find().limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
+    await kataModel.find({ isDeleted: false }).limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
       response.katas = katas
     })
 
@@ -29,23 +30,76 @@ export const getAllKatas = async (page: number, limit: number): Promise<any | un
   }
 }
 
+// - Get Kata by ID
+export const getKataByID = async (id: string): Promise<any | undefined> => {
+  try {
+    const kataModel = kataEntity()
+
+    // Search Kata by ID
+    return await kataModel.findById({ _id: id })
+  } catch (error) {
+    LogError(`[ORM ERROR]: Getting Kata by ID: ${error}`)
+  }
+}
+
+// - Delete Kata By ID
+export const deleteKataByID = async (id: string): Promise<any | undefined> => {
+  try {
+    const kataModel = kataEntity()
+
+    // Delete Kata
+    return await kataModel.deleteOne({ _id: id })
+  } catch (error) {
+    LogError(`[ORM ERROR]: Deleting Kata by ID: ${error}`)
+  }
+}
+
+// - Create New Kata
+export const createKata = async (kata: IKata): Promise<any | undefined> => {
+  try {
+    const kataModel = kataEntity()
+
+    // Create a new Kata
+    return await kataModel.create(kata)
+  } catch (error) {
+    LogError(`[ORM ERROR]: Create Kata: ${error}`)
+  }
+}
+
+// - Update Kata By ID
+export const updateKataById = async (id: string, kata: IKata): Promise<any | undefined> => {
+  try {
+    const kataModel = kataEntity()
+
+    // Update Kata
+    return await kataModel.findByIdAndUpdate(id, kata)
+  } catch (error) {
+    LogError(`[ORM ERROR]: Updating Kata ${id}: ${error}`)
+  }
+}
+
 /**
  * Method to obtain the Katas by difficulty level from Collection "katas" in Mongo Server
  */
-export const getKataByDifficulty = async (page: number, limit: number, level: number): Promise<any | undefined> => {
+export const getKataByDifficulty = async (page: number, limit: number, level: string): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 
     let response: any = {}
 
-    await kataModel.find({ level }).limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
-      response.katas = katas
-    })
-
-    await kataModel.countDocuments().then((total: number) => {
-      response.totalPages = Math.ceil(total / limit)
-      response.currentPage = page
-    })
+    if (level === 'Basic' || level === 'Medium' || level === 'High') {
+      await kataModel.find({ level }).limit(limit).skip((page - 1) * limit).then((katas: IKata[]) => {
+        response.katas = katas
+      })
+  
+      await kataModel.countDocuments().then((total: number) => {
+        response.totalPages = Math.ceil(total / limit)
+        response.currentPage = page
+      })
+    } else {
+      LogError('[LEVEL ERROR]: The level introduced is incorrect')
+      response = 'Incorrect level introduced'
+    }
 
     return response
   } catch (error) {
@@ -123,7 +177,7 @@ export const getAllKatasByChance = async (page: number, limit: number, chance: s
 /**
  * Method to update kata valoration
  */
-export const newValoration = async (id: string, update: any): Promise<any | undefined> => {
+export const newKataValoration = async (id: string, update: any): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 

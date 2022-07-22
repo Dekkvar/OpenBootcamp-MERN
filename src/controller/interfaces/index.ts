@@ -1,3 +1,4 @@
+import { IKata } from '../../domain/interfaces/IKata.interface'
 import { IUser } from '../../domain/interfaces/IUser.interface'
 import { BasicResponse, GoodbyeResponse } from '../types'
 
@@ -12,6 +13,8 @@ export interface IGoodbyeController {
 export interface IUserController {
   // Read all users from database || get User By ID
   getUsers(page: number, limit: number, id?: string): Promise<any>
+  // Get Katas of User
+  getKatas(page: number, limit: number, id?: string): Promise<any>
   // Delete User by ID
   deleteUser(id?: string): Promise<any>
   // Update User
@@ -20,7 +23,11 @@ export interface IUserController {
 
 export interface IKataController {
   // Read all katas from database || get Katas by parameter
-  getKatas(page: number, limit: number, level?: number, last?: string, rated?: string, chance?: string): Promise<any>
+  getKatas(page: number, limit: number, id?: string, level?: string, last?: string, rated?: string, chance?: string): Promise<any>
+  // Delete Kata by ID
+  deleteKataById(id?: string): Promise<any>
+  // Create New Kata
+  createKata(kata: IKata): Promise<any>
   // Update Kata
   updateKata(id: string, update: any): Promise<any>
 }

@@ -14,6 +14,9 @@ import bcrypt from 'bcrypt'
 
 // JWT
 import jwt from 'jsonwebtoken'
+import { kataEntity } from '../entities/Kata.entity'
+import { IKata } from '../interfaces/IKata.interface'
+import mongoose from 'mongoose'
 
 // Configuration of enviroment variables
 dotenv.config()
@@ -30,11 +33,11 @@ export const getAllUsers = async (page: number, limit: number): Promise<any[] | 
   try {
     const userModel = userEntity()
 
-    let response: any = {}
+    const response: any = {}
 
     // Search all users (using pagination)
     await userModel.find({ isDeleted: false })
-      .select('name email age')
+      .select('name email age katas')
       .limit(limit)
       .skip((page - 1) * limit)
       .exec().then((users: IUser[]) => {
@@ -59,7 +62,7 @@ export const getUserByID = async (id: string): Promise<any | undefined> => {
     const userModel = userEntity()
 
     // Search User by ID
-    return await userModel.findById({ _id: id }).select('name email age')
+    return await userModel.findById({ _id: id }).select('name email age katas')
   } catch (error) {
     LogError(`[ORM ERROR]: Getting User by ID: ${error}`)
   }
@@ -74,18 +77,6 @@ export const deleteUserByID = async (id: string): Promise<any | undefined> => {
     return await userModel.deleteOne({ _id: id })
   } catch (error) {
     LogError(`[ORM ERROR]: Deleting User by ID: ${error}`)
-  }
-}
-
-// - Create New User
-export const createUser = async (user: any): Promise<any | undefined> => {
-  try {
-    const userModel = userEntity()
-
-    // Create a new User
-    return await userModel.create(user)
-  } catch (error) {
-    LogError(`[ORM ERROR]: Create User: ${error}`)
   }
 }
 
@@ -138,7 +129,7 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
     }
 
     // Generate our JWT
-    token = jwt.sign({email: userFound!.email}, secret, {
+    token = jwt.sign({ email: userFound!.email }, secret, {
       expiresIn: '2h'
     })
 
@@ -154,4 +145,31 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
 // - Logout User
 export const logoutUser = async (): Promise<any | undefined> => {
   // TODO Not implemented
+}
+
+/**
+ * Method to obtain all Katas from an User
+ */
+export const getKatasFromUser = async (page: number, limit: number, id: string): Promise<any[] | undefined> => {
+  try {
+    const userModel = userEntity()
+    const katasModel = kataEntity()
+
+    // eslint-disable-next-line prefer-const
+    let response: any = {}
+
+    await userModel.findById(id).then(async (user: IUser) => {
+      response.userName = user.name
+
+      await katasModel.find({ _id: { $in: user.katas } }).then(async (katas: IKata[]) => {
+        response.katas = katas
+      })
+    }).catch((error) => {
+      LogError(`[ORM ERROR]: Obtaining User: ${error}`)
+    })
+
+    return response
+  } catch (error) {
+    LogError(`[ORM ERROR]: Getting All Users: ${error}`)
+  }
 }

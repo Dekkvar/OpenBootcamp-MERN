@@ -11,7 +11,6 @@ import { registerUser, loginUser, logoutUser, getUserByID } from '../domain/orm/
 @Route('/api/auth')
 @Tags('AuthController')
 export class AuthController implements IAuthController {
-  @Post('/register')
   public async registerUser (user: IUser): Promise<any> {
     let response: any = ''
 
@@ -31,12 +30,11 @@ export class AuthController implements IAuthController {
     return response
   }
 
-  @Post('/login')
   public async loginUser (auth: IAuth): Promise<any> {
     let response: AuthResponse | ErrorResponse | undefined
 
     if (auth) {
-      let data = await loginUser(auth)
+      const data = await loginUser(auth)
       response = {
         token: data.token,
         message: `Welcome, ${data.user.name}`
@@ -71,7 +69,6 @@ export class AuthController implements IAuthController {
     return response
   }
 
-  @Post('/logout')
   public async logoutUser (auth: any): Promise<any> {
     // TODO: Close session of user
   }
