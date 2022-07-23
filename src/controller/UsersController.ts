@@ -1,6 +1,6 @@
 // Controller: Ejecuta las ordenes del ORM
 
-import { Get, Query, Route, Tags, Delete, Put } from 'tsoa'
+import { Get, Query, Route, Tags, Delete } from 'tsoa'
 import { IUserController } from './interfaces'
 import { LogError, LogSuccess, LogWarning } from '../utils/logger'
 

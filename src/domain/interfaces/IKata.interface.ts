@@ -14,5 +14,5 @@ export interface IKata {
   valoration: Number,
   chance: Number,
   numVal: Number,
-  ratings: Object
+  ratings: []
 }

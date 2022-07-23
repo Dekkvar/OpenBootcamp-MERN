@@ -3,7 +3,7 @@ import { IKataController } from './interfaces'
 import { LogSuccess, LogWarning } from '../utils/logger'
 
 // ORM - Katas Collection
-import { getAllKatas, getKataByID, deleteKataByID, createKata, updateKataById, getAllKatasByRate, getKataByDifficulty, getLast5Katas, getAllKatasByChance, newKataValoration } from '../domain/orm/Kata.orm'
+import { getAllKatas, getKataByID, deleteKataByID, createKata, updateKataById, getAllKatasByRate, getKataByDifficulty, getLast5Katas, getAllKatasByChance, newKataValoration, getKataSolution } from '../domain/orm/Kata.orm'
 import { IKata } from 'src/domain/interfaces/IKata.interface'
 
 @Route('/api/katas')
@@ -66,30 +66,29 @@ export class KataController implements IKataController {
    * @returns Message information if deletion was correct
    */
   @Delete('/')
-  public async deleteKataById (@Query()id?: string): Promise<any> {
+  public async deleteKataById (@Query()kataId: string, userId: string): Promise<any> {
     let response: any = ''
 
-    if (id) {
-      LogSuccess(`[/api/katas] Delete Kata By ID: ${id}`)
-      await deleteKataByID(id).then((r) => {
-        response = {
-          message: `Kata with id ${id} deleted successfully`
-        }
-      })
-    } else {
-      LogWarning('[/api/katas] Delete Kata Without ID')
-      response = {
-        message: 'Please, provide an ID to remove from database'
-      }
-    }
+    response = await deleteKataByID(kataId, userId)
 
     return response
   }
 
   /**
-   * Endpoint to update the Katas in the Collection "Katas" of DB
+   * Endpoint to update a Kata in the Collection "Katas" of DB
    */
-  public async updateKata (@Query()id: string, update: any): Promise<any> {
+  public async updateKata (id: string, userId: string, update: any): Promise<any> {
+    let response: any = ''
+
+    response = await updateKataById(id, userId, update)
+
+    return response
+  }
+
+  /**
+   * Endpoint to create a new Kata valoration in the Collection "Katas" of DB
+   */
+  public async newKataValoration (@Query()id: string, update: any): Promise<any> {
     let response: any = ''
 
     if (id) {
@@ -103,6 +102,25 @@ export class KataController implements IKataController {
       LogWarning('[/api/katas] Update Kata Without ID')
       response = {
         message: 'Please, provide an ID to update an existing user'
+      }
+    }
+
+    return response
+  }
+
+  /**
+   * Endpoint to obtain the Kata Solution
+   */
+  public async getKataSolution (id: string, solution: string): Promise<any> {
+    let response: any = ''
+
+    if (solution) {
+      LogSuccess(`[/api/katas] Solution from Kata: ${id}`)
+      response = await getKataSolution(id)
+    } else {
+      LogWarning('[/api/katas] Solution error')
+      response = {
+        message: 'Please, provide a solution'
       }
     }
 

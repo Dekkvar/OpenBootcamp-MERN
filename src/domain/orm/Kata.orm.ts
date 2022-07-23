@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-trailing-spaces */
-import { LogError } from '../../utils/logger'
+import { LogError, LogSuccess } from '../../utils/logger'
 import { kataEntity } from '../entities/Kata.entity'
 import { IKata } from '../interfaces/IKata.interface'
 
@@ -43,12 +43,20 @@ export const getKataByID = async (id: string): Promise<any | undefined> => {
 }
 
 // - Delete Kata By ID
-export const deleteKataByID = async (id: string): Promise<any | undefined> => {
+export const deleteKataByID = async (id: string, userId: string): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 
-    // Delete Kata
-    return await kataModel.deleteOne({ _id: id })
+    const kata = await kataModel.findById(id)
+
+    if (kata.user !== userId) {
+      LogError(`[ORM ERROR]: User with id ${id} cannot modify this kata`)
+      const response = 'You cannot modify this Kata'
+      return response
+    } else {
+      LogSuccess(`[/api/katas]: Deleted Kata ${id}`)
+      return await kataModel.deleteOne({ _id: id })
+    }
   } catch (error) {
     LogError(`[ORM ERROR]: Deleting Kata by ID: ${error}`)
   }
@@ -67,12 +75,20 @@ export const createKata = async (kata: IKata): Promise<any | undefined> => {
 }
 
 // - Update Kata By ID
-export const updateKataById = async (id: string, kata: IKata): Promise<any | undefined> => {
+export const updateKataById = async (id: string, userId: string, update: any): Promise<any | undefined> => {
   try {
     const kataModel = kataEntity()
 
-    // Update Kata
-    return await kataModel.findByIdAndUpdate(id, kata)
+    const kata = await kataModel.findById(id)
+
+    if (kata.user !== userId) {
+      LogError(`[ORM ERROR]: User with id ${id} cannot modify this kata`)
+      const response = 'You cannot modify this Kata'
+      return response
+    } else {
+      LogSuccess(`[/api/katas]: Updating Kata ${id}`)
+      return await kataModel.findByIdAndUpdate(id, update)
+    }
   } catch (error) {
     LogError(`[ORM ERROR]: Updating Kata ${id}: ${error}`)
   }
@@ -184,13 +200,50 @@ export const newKataValoration = async (id: string, update: any): Promise<any | 
     // Comprobar si ya existe una valoración del usuario y actualizar el valor
     const dataToUpdate = await kataModel.findOne({ _id: id }, { _id: 0, valoration: 1, numVal: 1, ratings: 1 })
 
-    dataToUpdate.ratings[update.name] = Number(update.rating)
-    dataToUpdate.numVal++
-    dataToUpdate.valoration = Object.values(dataToUpdate.ratings).reduce((acc: any, curr: any) => acc + curr)
-    dataToUpdate.valoration = dataToUpdate.valoration / Object.keys(dataToUpdate.ratings).length
+    const arrId = dataToUpdate.ratings.map((elem: any) => {
+      return elem.id
+    })
+
+    if (arrId.indexOf(update.name) === -1) {
+      dataToUpdate.ratings.push({
+        id: update.name,
+        rating: update.rating
+      })
+      dataToUpdate.numVal++
+    } else {
+      dataToUpdate.ratings[arrId.indexOf(update.name)].rating = update.rating
+    }
+    
+    const arrValoraciones = dataToUpdate.ratings.map((elem: any) => {
+      return elem.rating
+    })
+    dataToUpdate.valoration = (arrValoraciones.reduce((acc: any, curr: any) => acc + curr) / arrValoraciones.length).toFixed(2)
 
     return await kataModel.findOneAndUpdate({ _id: id }, dataToUpdate)
   } catch (error) {
     LogError(`[ORM ERROR]: Adding new valoration: ${error}`)
+  }
+}
+
+/**
+ * Method to update kata valoration
+ */
+export const getKataSolution = async (id: string): Promise<any | undefined> => {
+  try {
+    const kataModel = kataEntity()
+
+    let response = await kataModel.findById(id, { _id: 0, solution: 1 })
+
+    if (response) {
+      return response
+    } else {
+      LogError('[ORM ERROR]: Kata doesnt exist')
+      response = {
+        message: 'The Kata does not exists'
+      }
+      return response
+    }
+  } catch (error) {
+    LogError(`[ORM ERROR]: Kata Solution: ${error}`)
   }
 }
